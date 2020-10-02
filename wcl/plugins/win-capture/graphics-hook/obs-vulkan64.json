@@ -1,0 +1,17 @@
+{
+    "file_format_version": "1.0.0",
+    "layer": {
+        "name": "VK_LAYER_WCL_HOOK",
+        "type": "GLOBAL",
+        "library_path": ".\\graphics-hook64.dll",
+        "api_version": "1.2.131",
+        "implementation_version": "1",
+        "description": "Open Broadcaster Software hook",
+        "functions": {
+            "vkNegotiateLoaderLayerInterfaceVersion": "WCL_Negotiate"
+        },
+        "disable_environment": {
+            "DISABLE_VULKAN_OBS_CAPTURE": "1"
+        }
+    }
+}

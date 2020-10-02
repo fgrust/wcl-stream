@@ -1,0 +1,26 @@
+IDI_ICON1 ICON DISCARDABLE "../cmake/winrc/wcl.ico"
+
+1 VERSIONINFO
+FILEVERSION ${UI_VERSION_MAJOR},${UI_VERSION_MINOR},${UI_VERSION_PATCH},0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904B0"
+    BEGIN
+      VALUE "CompanyName", "Worldcast Live Inc."
+      VALUE "FileDescription", "WCL Virtual Camera"
+      VALUE "FileVersion", "${UI_VERSION}"
+      VALUE "InternalName", "wcl"
+      VALUE "OriginalFilename", "wcl"
+      VALUE "ProductName", "WCL Virtual Camera"
+      VALUE "ProductVersion", "${UI_VERSION}"
+      VALUE "Comments", "Virtual Camera for livestreams for Worldcast Live"
+      VALUE "LegalCopyright", "(C) Worldcast Live Inc."
+    END
+  END
+
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x0409, 0x04B0
+  END
+END

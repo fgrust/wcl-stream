@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>com.wclproject.Studio</id>
+  <launchable type="desktop-id">com.wclproject.Studio.desktop</launchable>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0</project_license>
+  <name>WCL Studio</name>
+  <developer_name>WCL Project</developer_name>
+  <summary>WCL Virtual Camera/Audio Software</summary>
+  <description>
+    <p>Virtual Camera for livestreams for Worldcast Live.</p>
+  </description>
+  <url type="homepage">https://worldcastlive.com</url>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://worldcastlive.com/modern-layout/images/main-logo.png</image>
+    </screenshot>
+  </screenshots>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="@OBS_VERSION@" date="@APPDATA_RELEASE_DATE@"/>
+  </releases>
+</component>

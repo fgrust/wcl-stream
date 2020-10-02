@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>Jim</author>
+ <class>OBSBasic</class>
+ <widget class="QMainWindow" name="OBSBasic">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>640</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>WCL Virtual Camera</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="OBSBasicPreview" name="preview" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+	<horstretch>0</horstretch>
+	 <verstretch>0</verstretch>
+	</sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+	<width>32</width>
+	<height>32</height>
+       </size>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::ClickFocus</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="previewTextLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+	<item>
+	 <widget class="QLabel" name="sourceUrlLabel">
+	  <property name="text">
+	   <string>Source URL</string>
+	  </property>
+	 </widget>
+	</item>
+	<item>
+	 <widget class="QLineEdit" name="sourceUrl"></widget>
+	</item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="buttonGroupLayout">
+	<item>
+	 <widget class="QPushButton" name="resetButton">
+	  <property name="enabled">
+	   <bool>true</bool>
+	  </property>
+	  <property name="text">
+	   <string>Reset</string>
+	  </property>
+	 </widget>
+	</item>
+	<item>
+         <spacer name="buttonGroupSpacer_1">
+	  <property name="orientation">
+	   <enum>Qt::Horizontal</enum>
+	  </property>
+	  <property name="sizeHint" stdset="0">
+	   <size>
+	    <width>400</width>
+	    <height>0</height>
+	   </size>
+	  </property>
+	 </spacer>
+	</item>
+	<item>
+	 <widget class="QPushButton" name="cameraActionButton">
+	  <property name="sizePolicy">
+	   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+	    <horstretch>0</horstretch>
+	    <verstretch>0</verstretch>
+	   </sizepolicy>
+	  </property>
+	  <property name="icon">
+	   <iconset resource="obs.qrc">
+	    <normaloff>:/res/images/video.svg</normaloff>:/res/images/video.svg
+	   </iconset>
+	  </property>
+	  <property name="enabled">
+	   <bool>true</bool>
+	  </property>
+	  <property name="checkable">
+	   <bool>true</bool>
+	  </property>
+	  <property name="visible">
+	   <bool>true</bool>
+	  </property>
+	  <property name="checked">
+	   <bool>false</bool>
+	  </property>
+	 </widget>
+	</item>
+	<item>
+	 <widget class="QPushButton" name="audioActionButton">
+	  <property name="sizePolicy">
+	   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+	    <horstretch>0</horstretch>
+	    <verstretch>0</verstretch>
+	   </sizepolicy>
+	  </property>
+	  <property name="icon">
+	   <iconset resource="obs.qrc">
+	    <normaloff>:/settings/images/settings/audio.svg</normaloff>:/settings/images/settings/audio.svg
+	   </iconset>
+	  </property>
+	  <property name="enabled">
+	   <bool>true</bool>
+	  </property>
+	  <property name="checkable">
+	   <bool>true</bool>
+	  </property>
+	  <property name="visible">
+	   <bool>true</bool>
+	  </property>
+	  <property name="checked">
+	   <bool>false</bool>
+	  </property>
+	 </widget>
+        </item>
+	 <item>
+	 <spacer name="buttonGroupSpacer_2">
+	  <property name="orientation">
+	   <enum>Qt::Horizontal</enum>
+	  </property>
+	  <property name="sizeHint" stdset="0">
+	   <size>
+	    <width>400</width>
+	    <height>0</height>
+	   </size>
+	  </property>
+	 </spacer>
+	</item>
+	<item>
+	 <widget class="QPushButton" name="closeButton">
+	  <property name="enabled">
+	   <bool>true</bool>
+	  </property>
+	  <property name="text">
+	   <string>Close</string>
+	  </property>
+	 </widget>
+	</item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="OBSBasicStatusBar" name="statusbar"/>
+  <action name="actionStartOutput"/>
+  <action name="actionStopOutput"/>
+  <action name="actionToggleMacOutput"/>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>OBSBasicPreview</class>
+   <extends>QWidget</extends>
+   <header>window-basic-preview.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>OBSBasicStatusBar</class>
+   <extends>QStatusBar</extends>
+   <header>window-basic-status-bar.hpp</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="obs.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>closeButton</sender>
+   <signal>clicked()</signal>
+   <receiver>OBSBasic</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>558</x>
+     <y>356</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>512</x>
+     <y>-10</y>
+    </hint>
+   </hints>
+  </connection>
+  
+ </connections>
+</ui>

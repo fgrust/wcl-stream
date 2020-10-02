@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Name=WCL Studio
+GenericName=WCL Virtual Camera/Audio Software
+Comment=Virtual Camera live streaming for Worldcast Inc.
+Exec=wcl
+Icon=com.wclproject.Studio
+Terminal=false
+Type=Application
+Categories=AudioVideo;Recorder;
+StartupNotify=true
+StartupWMClass=wcl
