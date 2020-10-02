@@ -3060,7 +3060,7 @@ void OBSBasic::UpdateContextBar()
 void OBSBasic::handleVirtualOutput()
 {
 #ifdef __APPLE__
-		emit ui->actionToggleMacOutput->trigger();
+	emit ui->actionToggleMacOutput->trigger();
 #else
 	if (ui->cameraActionButton->isChecked()) {
 		emit ui->actionStartOutput->trigger();

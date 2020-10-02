@@ -642,8 +642,8 @@ extern "C" void InitScripts()
 	obs_scripting_load();
 	obs_scripting_set_log_callback(script_log, nullptr);
 
-	QAction *action = (QAction *)obs_frontend_add_tools_menu_qaction(
-		obs_module_text("Scripts"));
+	//QAction *action = (QAction *)obs_frontend_add_tools_menu_qaction(
+	//	obs_module_text("Scripts"));
 
 #if PYTHON_UI
 	config_t *config = obs_frontend_get_global_config();
@@ -674,5 +674,5 @@ extern "C" void InitScripts()
 	obs_frontend_add_preload_callback(load_script_data, nullptr);
 	obs_frontend_add_event_callback(obs_event, nullptr);
 
-	action->connect(action, &QAction::triggered, cb);
+	//action->connect(action, &QAction::triggered, cb);
 }
