@@ -107,7 +107,7 @@ elseif(APPLE)
 		platform-osx.mm)
 
 	find_package(AppKit REQUIRED)
-	set(obs_PLATFORM_LIBRARIES ${APPKIT_LIBRARIES})
+	set(wcl_PLATFORM_LIBRARIES ${APPKIT_LIBRARIES})
 
 	add_definitions(-fobjc-arc)
 

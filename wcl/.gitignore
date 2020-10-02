@@ -102,3 +102,6 @@ tags
 */**/.DS_Store
 /build-win
 /build-mac
+/build
+
+Brewfile.lock.json
