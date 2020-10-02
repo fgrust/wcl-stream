@@ -1,0 +1,10 @@
+config/obs-studio
+config/plugins
+
+build
+
+WCL.app
+BlackHole.driver
+
+obs-mac-virtualcam.plugin
+obs-mac-virtualcam.so
