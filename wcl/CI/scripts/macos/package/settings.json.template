@@ -1,7 +1,7 @@
 {
-    "title": "OBS-Studio $$VERSION$$",
+    "title": "WCL Virtual Camera $$VERSION$$",
     "background": "$$CI_PATH$$/package/background.tiff",
-    "icon": "$$CI_PATH$$/app/obs.icns",
+    "icon": "$$CI_PATH$$/app/wcl.icns",
     "format": "ULFO",
     "icon-size": 96,
     "window": {
@@ -18,7 +18,7 @@
         "x": 124,
         "y": 180,
         "type": "file",
-        "path": "$$BUNDLE_PATH$$/OBS.app"
+        "path": "$$BUNDLE_PATH$$/WCL.app"
     }, {
         "x": 416,
         "y": 180,

@@ -3,15 +3,15 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleIconFile</key>
-	<string>obs.icns</string>
+	<string>wcl.icns</string>
 	<key>CFBundleName</key>
-	<string>OBS</string>
+	<string>WCL</string>
 	<key>CFBundleGetInfoString</key>
-	<string>OBS - Free and Open Source Streaming/Recording Software</string>
+	<string>WCL - Virtual Camera for livestreams for Worldcast Live</string>
 	<key>CFBundleExecutable</key>
-	<string>obs</string>
+	<string>wcl</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.obsproject.obs-studio</string>
+	<string>com.wclproject.wcl-studio</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>LSMinimumSystemVersion</key>
@@ -21,8 +21,8 @@
 	<key>LSAppNapIsDisabled</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
- 	<string>OBS needs to access the camera to enable camera sources to work.</string>
+ 	<string>WCL needs to access the camera to enable camera sources to work.</string>
  	<key>NSMicrophoneUsageDescription</key>
- 	<string>OBS needs to access the microphone to enable audio input.</string>
+ 	<string>WCL needs to access the microphone to enable audio input.</string>
 </dict>
 </plist>

@@ -31,12 +31,13 @@
 set -eE
 
 ## SET UP ENVIRONMENT ##
-PRODUCT_NAME="OBS-Studio"
+PRODUCT_NAME="WCL-VirtualCamera"
+PRODUCT_VERSION="1.0.0"
 
 CHECKOUT_DIR="$(git rev-parse --show-toplevel)"
-DEPS_BUILD_DIR="${CHECKOUT_DIR}/../obs-build-dependencies"
-CI_SCRIPTS="${CHECKOUT_DIR}/CI/scripts/macos"
-CI_WORKFLOW="${CHECKOUT_DIR}/.github/workflows/main.yml"
+DEPS_BUILD_DIR="${CHECKOUT_DIR}/../wcl-build-dependencies"
+CI_SCRIPTS="${CHECKOUT_DIR}/wcl/CI/scripts/macos"
+CI_WORKFLOW="${CHECKOUT_DIR}/wcl/workflows/main.yml"
 CI_CEF_VERSION=$(cat ${CI_WORKFLOW} | sed -En "s/[ ]+CEF_BUILD_VERSION: '([0-9]+)'/\1/p")
 CI_DEPS_VERSION=$(cat ${CI_WORKFLOW} | sed -En "s/[ ]+MACOS_DEPS_VERSION: '([0-9\-]+)'/\1/p")
 CI_VLC_VERSION=$(cat ${CI_WORKFLOW} | sed -En "s/[ ]+VLC_VERSION: '([0-9\.]+)'/\1/p")
@@ -210,27 +211,27 @@ install_dmgbuild() {
 
 ## OBS BUILD FROM SOURCE ##
 configure_obs_build() {
-    ensure_dir "${CHECKOUT_DIR}/build"
+    ensure_dir "${CHECKOUT_DIR}/wcl/build"
 
     CUR_DATE=$(date +"%Y-%m-%d@%H%M%S")
-    NIGHTLY_DIR="${CHECKOUT_DIR}/nightly-${CUR_DATE}"
+    NIGHTLY_DIR="${CHECKOUT_DIR}/wcl/nightly-${CUR_DATE}"
     PACKAGE_NAME=$(find . -name "*.dmg")
 
-    if [ -d ./OBS.app ]; then
+    if [ -d ./WCL.app ]; then
         ensure_dir "${NIGHTLY_DIR}"
-        mv ../build/OBS.app .
-        info "You can find OBS.app in ${NIGHTLY_DIR}"
+        mv ../build/WCL.app .
+        info "You can find WCL.app in ${NIGHTLY_DIR}"
     fi
-    ensure_dir "${CHECKOUT_DIR}/build"
+    ensure_dir "${CHECKOUT_DIR}/wcl/build"
     if ([ -n "${PACKAGE_NAME}" ] && [ -f ${PACKAGE_NAME} ]); then
         ensure_dir "${NIGHTLY_DIR}"
         mv ../build/$(basename "${PACKAGE_NAME}") .
         info "You can find ${PACKAGE_NAME} in ${NIGHTLY_DIR}"
     fi
 
-    ensure_dir "${CHECKOUT_DIR}/build"
+    ensure_dir "${CHECKOUT_DIR}/wcl/build"
 
-    hr "Run CMAKE for OBS..."
+    hr "Run CMAKE for WCL..."
     cmake -DENABLE_SPARKLE_UPDATER=ON \
         -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13 \
         -DDISABLE_PYTHON=ON  \
@@ -238,8 +239,8 @@ configure_obs_build() {
         -DSWIGDIR="/tmp/obsdeps" \
         -DDepsPath="/tmp/obsdeps" \
         -DVLCPath="${DEPS_BUILD_DIR}/vlc-${VLC_VERSION:-${CI_VLC_VERSION}}" \
-        -DBUILD_BROWSER=ON \
-        -DBROWSER_DEPLOY=ON \
+        -DBUILD_BROWSER=OFF \
+        -DBROWSER_DEPLOY=OFF \
         -DBUILD_CAPTIONS=ON \
         -DWITH_RTMPS=ON \
         -DCEF_ROOT_DIR="${DEPS_BUILD_DIR}/cef_binary_${CEF_BUILD_VERSION:-${CI_CEF_VERSION}}_macosx64" \
@@ -248,127 +249,124 @@ configure_obs_build() {
 }
 
 run_obs_build() {
-    ensure_dir "${CHECKOUT_DIR}/build"
-    hr "Build OBS..."
+    ensure_dir "${CHECKOUT_DIR}/wcl/build"
+    hr "Build WCL..."
     make -j4
 }
 
 ## OBS BUNDLE AS MACOS APPLICATION ##
 bundle_dylibs() {
-    ensure_dir "${CHECKOUT_DIR}/build"
+    ensure_dir "${CHECKOUT_DIR}/wcl/build"
 
-    if [ ! -d ./OBS.app ]; then
-        error "No OBS.app bundle found"
+    if [ ! -d ./WCL.app ]; then
+        error "No WCL.app bundle found"
         exit 1
     fi
 
     hr "Bundle dylibs for macOS application"
 
     step "Run dylibBundler.."
-    ${CI_SCRIPTS}/app/dylibBundler -cd -of -a ./OBS.app -q -f \
-        -s ./OBS.app/Contents/MacOS \
+    ${CI_SCRIPTS}/app/dylibBundler -cd -of -a ./WCL.app -q -f \
+        -s ./WCL.app/Contents/MacOS \
         -s "${DEPS_BUILD_DIR}/sparkle/Sparkle.framework" \
         -s ./rundir/RelWithDebInfo/bin/ \
-        -x ./OBS.app/Contents/PlugIns/coreaudio-encoder.so \
-        -x ./OBS.app/Contents/PlugIns/decklink-ouput-ui.so \
-        -x ./OBS.app/Contents/PlugIns/frontend-tools.so \
-        -x ./OBS.app/Contents/PlugIns/image-source.so \
-        -x ./OBS.app/Contents/PlugIns/linux-jack.so \
-        -x ./OBS.app/Contents/PlugIns/mac-avcapture.so \
-        -x ./OBS.app/Contents/PlugIns/mac-capture.so \
-        -x ./OBS.app/Contents/PlugIns/mac-decklink.so \
-        -x ./OBS.app/Contents/PlugIns/mac-syphon.so \
-        -x ./OBS.app/Contents/PlugIns/mac-vth264.so \
-        -x ./OBS.app/Contents/PlugIns/obs-browser.so \
-        -x ./OBS.app/Contents/PlugIns/obs-browser-page \
-        -x ./OBS.app/Contents/PlugIns/obs-ffmpeg.so \
-        -x ./OBS.app/Contents/PlugIns/obs-filters.so \
-        -x ./OBS.app/Contents/PlugIns/obs-transitions.so \
-        -x ./OBS.app/Contents/PlugIns/obs-vst.so \
-        -x ./OBS.app/Contents/PlugIns/rtmp-services.so \
-        -x ./OBS.app/Contents/MacOS/obs-ffmpeg-mux \
-        -x ./OBS.app/Contents/MacOS/obslua.so \
-        -x ./OBS.app/Contents/PlugIns/obs-x264.so \
-        -x ./OBS.app/Contents/PlugIns/text-freetype2.so \
-        -x ./OBS.app/Contents/PlugIns/obs-libfdk.so \
-        -x ./OBS.app/Contents/PlugIns/obs-outputs.so
+        -x ./WCL.app/Contents/PlugIns/coreaudio-encoder.so \
+        -x ./WCL.app/Contents/PlugIns/decklink-ouput-ui.so \
+        -x ./WCL.app/Contents/PlugIns/frontend-tools.so \
+        -x ./WCL.app/Contents/PlugIns/image-source.so \
+        -x ./WCL.app/Contents/PlugIns/linux-jack.so \
+        -x ./WCL.app/Contents/PlugIns/mac-avcapture.so \
+        -x ./WCL.app/Contents/PlugIns/mac-capture.so \
+        -x ./WCL.app/Contents/PlugIns/mac-decklink.so \
+        -x ./WCL.app/Contents/PlugIns/mac-syphon.so \
+        -x ./WCL.app/Contents/PlugIns/mac-vth264.so \
+        -x ./WCL.app/Contents/PlugIns/obs-ffmpeg.so \
+        -x ./WCL.app/Contents/PlugIns/obs-filters.so \
+        -x ./WCL.app/Contents/PlugIns/obs-transitions.so \
+        -x ./WCL.app/Contents/PlugIns/obs-vst.so \
+        -x ./WCL.app/Contents/PlugIns/rtmp-services.so \
+        -x ./WCL.app/Contents/MacOS/obs-ffmpeg-mux \
+        -x ./WCL.app/Contents/PlugIns/obs-x264.so \
+        -x ./WCL.app/Contents/PlugIns/text-freetype2.so \
+        -x ./WCL.app/Contents/PlugIns/obs-libfdk.so \
+        -x ./WCL.app/Contents/PlugIns/obs-outputs.so
     step "Move libobs-opengl to final destination"
-    cp ./libobs-opengl/libobs-opengl.so ./OBS.app/Contents/Frameworks
+    cp ./libobs-opengl/libobs-opengl.so ./WCL.app/Contents/Frameworks
 
     step "Copy QtNetwork for plugin support"
-    cp -R /tmp/obsdeps/lib/QtNetwork.framework ./OBS.app/Contents/Frameworks
-    chmod -R +w ./OBS.app/Contents/Frameworks/QtNetwork.framework
-    rm -r ./OBS.app/Contents/Frameworks/QtNetwork.framework/Headers
-    rm -r ./OBS.app/Contents/Frameworks/QtNetwork.framework/Versions/5/Headers/
-    chmod 644 ./OBS.app/Contents/Frameworks/QtNetwork.framework/Versions/5/Resources/Info.plist
-    install_name_tool -id @executable_path/../Frameworks/QtNetwork.framework/Versions/5/QtNetwork ./OBS.app/Contents/Frameworks/QtNetwork.framework/Versions/5/QtNetwork
-    install_name_tool -change /tmp/obsdeps/lib/QtCore.framework/Versions/5/QtCore @executable_path/../Frameworks/QtCore.framework/Versions/5/QtCore ./OBS.app/Contents/Frameworks/QtNetwork.framework/Versions/5/QtNetwork
+    cp -R /tmp/obsdeps/lib/QtNetwork.framework ./WCL.app/Contents/Frameworks
+    chmod -R +w ./WCL.app/Contents/Frameworks/QtNetwork.framework
+    rm -r ./WCL.app/Contents/Frameworks/QtNetwork.framework/Headers
+    rm -r ./WCL.app/Contents/Frameworks/QtNetwork.framework/Versions/5/Headers/
+    chmod 644 ./WCL.app/Contents/Frameworks/QtNetwork.framework/Versions/5/Resources/Info.plist
+    install_name_tool -id @executable_path/../Frameworks/QtNetwork.framework/Versions/5/QtNetwork ./WCL.app/Contents/Frameworks/QtNetwork.framework/Versions/5/QtNetwork
+    install_name_tool -change /tmp/obsdeps/lib/QtCore.framework/Versions/5/QtCore @executable_path/../Frameworks/QtCore.framework/Versions/5/QtCore ./WCL.app/Contents/Frameworks/QtNetwork.framework/Versions/5/QtNetwork
 }
 
 install_frameworks() {
-    ensure_dir "${CHECKOUT_DIR}/build"
+    ensure_dir "${CHECKOUT_DIR}/wcl/build"
 
-    if [ ! -d ./OBS.app ]; then
-        error "No OBS.app bundle found"
+    if [ ! -d ./WCL.app ]; then
+        error "No WCL.app bundle found"
         exit 1
     fi
 
     hr "Adding Chromium Embedded Framework"
     step "Copy Framework..."
-    sudo cp -R "${DEPS_BUILD_DIR}/cef_binary_${CEF_BUILD_VERSION:-${CI_CEF_VERSION}}_macosx64/Release/Chromium Embedded Framework.framework" ./OBS.app/Contents/Frameworks/
-    sudo chown -R $(whoami) ./OBS.app/Contents/Frameworks/
+    sudo cp -R "${DEPS_BUILD_DIR}/cef_binary_${CEF_BUILD_VERSION:-${CI_CEF_VERSION}}_macosx64/Release/Chromium Embedded Framework.framework" ./WCL.app/Contents/Frameworks/
+    sudo chown -R $(whoami) ./WCL.app/Contents/Frameworks/
 }
 
 prepare_macos_bundle() {
-    ensure_dir "${CHECKOUT_DIR}/build"
+    ensure_dir "${CHECKOUT_DIR}/wcl/build"
 
     if [ ! -d ./rundir/RelWithDebInfo/bin ]; then
-        error "No OBS build found"
+        error "No WCL build found"
         return
     fi
 
-    if [ -d ./OBS.app ]; then rm -rf ./OBS.app; fi
+    if [ -d ./WCL.app ]; then rm -rf ./WCL.app; fi
 
-    hr "Preparing OBS.app bundle"
+    hr "Preparing WCL.app bundle"
     step "Copy binary and plugins..."
-    mkdir -p OBS.app/Contents/MacOS
-    mkdir OBS.app/Contents/PlugIns
-    mkdir OBS.app/Contents/Resources
+    mkdir -p WCL.app/Contents/MacOS
+    mkdir WCL.app/Contents/PlugIns
+    mkdir WCL.app/Contents/Resources
 
-    cp rundir/RelWithDebInfo/bin/obs ./OBS.app/Contents/MacOS
-    cp rundir/RelWithDebInfo/bin/obs-ffmpeg-mux ./OBS.app/Contents/MacOS
-    cp rundir/RelWithDebInfo/bin/libobsglad.0.dylib ./OBS.app/Contents/MacOS
-    cp -R rundir/RelWithDebInfo/data ./OBS.app/Contents/Resources
-    cp ${CI_SCRIPTS}/app/obs.icns ./OBS.app/Contents/Resources
-    cp -R rundir/RelWithDebInfo/obs-plugins/ ./OBS.app/Contents/PlugIns
-    cp ${CI_SCRIPTS}/app/Info.plist ./OBS.app/Contents
+    cp rundir/RelWithDebInfo/bin/wcl ./WCL.app/Contents/MacOS
+    cp rundir/RelWithDebInfo/bin/obs-ffmpeg-mux ./WCL.app/Contents/MacOS
+    cp rundir/RelWithDebInfo/bin/libobsglad.0.dylib ./WCL.app/Contents/MacOS
+    cp -R rundir/RelWithDebInfo/data ./WCL.app/Contents/Resources
+    cp ${CI_SCRIPTS}/app/wcl.icns ./WCL.app/Contents/Resources
+    cp -R rundir/RelWithDebInfo/obs-plugins/ ./WCL.app/Contents/PlugIns
+    cp ${CI_SCRIPTS}/app/Info.plist ./WCL.app/Contents
     # Scripting plugins are required to be placed in same directory as binary
-    if [ -d ./OBS.app/Contents/Resources/data/obs-scripting ]; then
-        mv ./OBS.app/Contents/Resources/data/obs-scripting/obslua.so ./OBS.app/Contents/MacOS/
-        # mv ./OBS.app/Contents/Resources/data/obs-scripting/_obspython.so ./OBS.app/Contents/MacOS/
-        # mv ./OBS.app/Contents/Resources/data/obs-scripting/obspython.py ./OBS.app/Contents/MacOS/
-        rm -rf ./OBS.app/Contents/Resources/data/obs-scripting/
+    if [ -d ./WCL.app/Contents/Resources/data/obs-scripting ]; then
+        # mv ./WCL.app/Contents/Resources/data/obs-scripting/obslua.so ./WCL.app/Contents/MacOS/
+        # mv ./WCL.app/Contents/Resources/data/obs-scripting/_obspython.so ./WCL.app/Contents/MacOS/
+        # mv ./WCL.app/Contents/Resources/data/obs-scripting/obspython.py ./WCL.app/Contents/MacOS/
+        rm -rf ./WCL.app/Contents/Resources/data/obs-scripting/
     fi
 
     bundle_dylibs
     install_frameworks
 
-    cp ${CI_SCRIPTS}/app/OBSPublicDSAKey.pem ./OBS.app/Contents/Resources
+    cp ${CI_SCRIPTS}/app/OBSPublicDSAKey.pem ./WCL.app/Contents/Resources
 
     step "Set bundle meta information..."
-    plutil -insert CFBundleVersion -string ${GIT_TAG}-${GIT_HASH} ./OBS.app/Contents/Info.plist
-    plutil -insert CFBundleShortVersionString -string ${GIT_TAG}-${GIT_HASH} ./OBS.app/Contents/Info.plist
-    plutil -insert OBSFeedsURL -string https://obsproject.com/osx_update/feeds.xml ./OBS.app/Contents/Info.plist
-    plutil -insert SUFeedURL -string https://obsproject.com/osx_update/stable/updates.xml ./OBS.app/Contents/Info.plist
-    plutil -insert SUPublicDSAKeyFile -string OBSPublicDSAKey.pem ./OBS.app/Contents/Info.plist
+    plutil -insert CFBundleVersion -string ${PRODUCT_VERSION} ./WCL.app/Contents/Info.plist
+    plutil -insert CFBundleShortVersionString -string ${PRODUCT_VERSION} ./WCL.app/Contents/Info.plist
+    # plutil -insert OBSFeedsURL -string https://obsproject.com/osx_update/feeds.xml ./WCL.app/Contents/Info.plist
+    # plutil -insert SUFeedURL -string https://obsproject.com/osx_update/stable/updates.xml ./WCL.app/Contents/Info.plist
+    plutil -insert SUPublicDSAKeyFile -string OBSPublicDSAKey.pem ./WCL.app/Contents/Info.plist
 }
 
 ## CREATE MACOS DISTRIBUTION AND INSTALLER IMAGE ##
 prepare_macos_image() {
-    ensure_dir "${CHECKOUT_DIR}/build"
+    ensure_dir "${CHECKOUT_DIR}/wcl/build"
 
-    if [ ! -d ./OBS.app ]; then
-        error "No OBS.app bundle found"
+    if [ ! -d ./WCL.app ]; then
+        error "No WCL.app bundle found"
         return
     fi
 
@@ -380,11 +378,11 @@ prepare_macos_image() {
 
     step "Run dmgbuild..."
     cp "${CI_SCRIPTS}/package/settings.json.template" ./settings.json
-    sed -i '' 's#\$\$VERSION\$\$#'"${GIT_TAG}"'#g' ./settings.json
+    sed -i '' 's#\$\$VERSION\$\$#'"${PRODUCT_VERSION}"'#g' ./settings.json
     sed -i '' 's#\$\$CI_PATH\$\$#'"${CI_SCRIPTS}"'#g' ./settings.json
-    sed -i '' 's#\$\$BUNDLE_PATH\$\$#'"${CHECKOUT_DIR}"'/build#g' ./settings.json
+    sed -i '' 's#\$\$BUNDLE_PATH\$\$#'"${CHECKOUT_DIR}"'/wcl/build#g' ./settings.json
     echo -n "${COLOR_ORANGE}"
-    dmgbuild "OBS-Studio ${GIT_TAG}" "${FILE_NAME}" -s ./settings.json
+    dmgbuild "WCL Virtual Camera ${PRODUCT_VERSION}" "${FILE_NAME}" -s ./settings.json
     echo -n "${COLOR_RESET}"
 
     if [ -n "${CODESIGN_OBS}" ]; then
@@ -435,47 +433,47 @@ read_codesign_pass() {
 codesign_bundle() {
     if [ ! -n "${CODESIGN_OBS}" ]; then step "Skipping application bundle code signing"; return; fi
 
-    ensure_dir "${CHECKOUT_DIR}/build"
+    ensure_dir "${CHECKOUT_DIR}/wcl/build"
     trap "caught_error 'code-signing app'" ERR
 
-    if [ ! -d ./OBS.app ]; then
-        error "No OBS.app bundle found"
+    if [ ! -d ./WCL.app ]; then
+        error "No WCL.app bundle found"
         return
     fi
 
     hr "Code-signing application bundle"
 
-    xattr -crs ./OBS.app
+    xattr -crs ./WCL.app
 
     read_codesign_ident
     step "Code-sign Sparkle framework..."
     echo -n "${COLOR_ORANGE}"
-    codesign --force --options runtime --sign "${CODESIGN_IDENT}" "./OBS.app/Contents/Frameworks/Sparkle.framework/Versions/A/Resources/Autoupdate.app/Contents/MacOS/fileop"
-    codesign --force --options runtime --sign "${CODESIGN_IDENT}" "./OBS.app/Contents/Frameworks/Sparkle.framework/Versions/A/Resources/Autoupdate.app/Contents/MacOS/Autoupdate"
-    codesign --force --options runtime --sign "${CODESIGN_IDENT}" --deep ./OBS.app/Contents/Frameworks/Sparkle.framework
+    codesign --force --options runtime --sign "${CODESIGN_IDENT}" "./WCL.app/Contents/Frameworks/Sparkle.framework/Versions/A/Resources/Autoupdate.app/Contents/MacOS/fileop"
+    codesign --force --options runtime --sign "${CODESIGN_IDENT}" "./WCL.app/Contents/Frameworks/Sparkle.framework/Versions/A/Resources/Autoupdate.app/Contents/MacOS/Autoupdate"
+    codesign --force --options runtime --sign "${CODESIGN_IDENT}" --deep ./WCL.app/Contents/Frameworks/Sparkle.framework
     echo -n "${COLOR_RESET}"
 
     step "Code-sign CEF framework..."
     echo -n "${COLOR_ORANGE}"
-    codesign --force --options runtime --sign "${CODESIGN_IDENT}" "./OBS.app/Contents/Frameworks/Chromium Embedded Framework.framework/Libraries/libEGL.dylib"
-    codesign --force --options runtime --sign "${CODESIGN_IDENT}" "./OBS.app/Contents/Frameworks/Chromium Embedded Framework.framework/Libraries/libswiftshader_libEGL.dylib"
-    codesign --force --options runtime --sign "${CODESIGN_IDENT}" "./OBS.app/Contents/Frameworks/Chromium Embedded Framework.framework/Libraries/libGLESv2.dylib"
-    codesign --force --options runtime --sign "${CODESIGN_IDENT}" "./OBS.app/Contents/Frameworks/Chromium Embedded Framework.framework/Libraries/libswiftshader_libGLESv2.dylib"
-    codesign --force --options runtime --sign "${CODESIGN_IDENT}" --deep "./OBS.app/Contents/Frameworks/Chromium Embedded Framework.framework"
+    codesign --force --options runtime --sign "${CODESIGN_IDENT}" "./WCL.app/Contents/Frameworks/Chromium Embedded Framework.framework/Libraries/libEGL.dylib"
+    codesign --force --options runtime --sign "${CODESIGN_IDENT}" "./WCL.app/Contents/Frameworks/Chromium Embedded Framework.framework/Libraries/libswiftshader_libEGL.dylib"
+    codesign --force --options runtime --sign "${CODESIGN_IDENT}" "./WCL.app/Contents/Frameworks/Chromium Embedded Framework.framework/Libraries/libGLESv2.dylib"
+    codesign --force --options runtime --sign "${CODESIGN_IDENT}" "./WCL.app/Contents/Frameworks/Chromium Embedded Framework.framework/Libraries/libswiftshader_libGLESv2.dylib"
+    codesign --force --options runtime --sign "${CODESIGN_IDENT}" --deep "./WCL.app/Contents/Frameworks/Chromium Embedded Framework.framework"
     echo -n "${COLOR_RESET}"
 
-    step "Code-sign OBS code..."
+    step "Code-sign WCL code..."
     echo -n "${COLOR_ORANGE}"
-    codesign --force --options runtime --entitlements "${CI_SCRIPTS}/app/entitlements.plist" --sign "${CODESIGN_IDENT}" --deep ./OBS.app
+    codesign --force --options runtime --entitlements "${CI_SCRIPTS}/app/entitlements.plist" --sign "${CODESIGN_IDENT}" --deep ./WCL.app
     echo -n "${COLOR_RESET}"
     step "Check code-sign result..."
-    codesign -dvv ./OBS.app
+    codesign -dvv ./WCL.app
 }
 
 codesign_image() {
     if [ ! -n "${CODESIGN_OBS}" ]; then step "Skipping installer image code signing"; return; fi
 
-    ensure_dir "${CHECKOUT_DIR}/build"
+    ensure_dir "${CHECKOUT_DIR}/wcl/build"
     trap "caught_error 'code-signing image'" ERR
 
     if [ ! -f "${FILE_NAME}" ]; then
@@ -544,15 +542,15 @@ notarize_macos() {
     hr "Notarizing OBS for macOS"
     trap "caught_error 'notarizing app'" ERR
 
-    ensure_dir "${CHECKOUT_DIR}/build"
+    ensure_dir "${CHECKOUT_DIR}/wcl/build"
 
     if [ -f "${FILE_NAME}" ]; then
         NOTARIZE_TARGET="${FILE_NAME}"
-        xcnotary precheck "./OBS.app"
-    elif [ -d "OBS.app" ]; then
-        NOTARIZE_TARGET="./OBS.app"
+        xcnotary precheck "./WCL.app"
+    elif [ -d "WCL.app" ]; then
+        NOTARIZE_TARGET="./WCL.app"
     else
-        error "No notarization app bundle ('OBS.app') or disk image ('${FILE_NAME}') found"
+        error "No notarization app bundle ('WCL.app') or disk image ('${FILE_NAME}') found"
         return
     fi
 
@@ -578,13 +576,9 @@ print_usage() {
     exit 0
 }
 
-obs-build-main() {
+wcl-build-main() {
     ensure_dir ${CHECKOUT_DIR}
-    git fetch origin --tags
-    GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-    GIT_HASH=$(git rev-parse --short HEAD)
-    GIT_TAG=$(git describe --tags --abbrev=0)
-    FILE_NAME="obs-studio-${GIT_TAG}-${GIT_HASH}-macOS.dmg"
+    FILE_NAME="wcl-virtual-camera-${PRODUCT_VERSION}-macOS.dmg"
 
     ##########################################################################
     # IMPORTANT:
@@ -622,4 +616,4 @@ obs-build-main() {
     cleanup
 }
 
-obs-build-main $*
+wcl-build-main $*
