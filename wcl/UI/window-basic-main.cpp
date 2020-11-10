@@ -227,7 +227,10 @@ OBSBasic::OBSBasic(QWidget *parent)
 	transitions = new QComboBox(this);
 	transitions->setObjectName(QStringLiteral("transitions"));
 	transitions->setVisible(false);
-	//ui->previewDisabledWidget->setVisible(false);
+
+	ui->syncOffset->setMaxLength(6);
+	ui->syncOffset->setMaximumWidth(50);
+	ui->syncOffset->setValidator(new QIntValidator(-99999, 99999, this));
 
 	connect(ui->cameraActionButton, SIGNAL(clicked()), this,
 		SLOT(handleVirtualOutput()));
@@ -1769,6 +1772,10 @@ void OBSBasic::OBSInit()
 		const char *sourceUrl = obs_data_get_string(setting, "input");
 		ui->sourceUrl->setText(sourceUrl);
 
+		const int offset = obs_source_get_sync_offset(source) / 1000000;
+
+		ui->syncOffset->setText(QString::number(offset));
+
 		obs_source_set_muted(source, true);
 
 #ifndef __APPLE__
@@ -3082,6 +3089,10 @@ void OBSBasic::handleResetSource()
 	OBSSceneItem item = GetCurrentSceneItem();
 	OBSSource source = obs_sceneitem_get_source(item);
 	OBSData setting = obs_source_get_settings(source);
+
+	int offset = ui->syncOffset->text().toInt();
+
+	obs_source_set_sync_offset(source, offset * 1000000);
 
 	const char *sourceUrl = obs_data_get_string(setting, "input");
 
